@@ -1,0 +1,2 @@
+module SidekiqAutoscaler::Sensor
+end

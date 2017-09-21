@@ -1,0 +1,2 @@
+module SidekiqAutoscaler::Util
+end
