@@ -50,6 +50,11 @@ module SidekiqAutoscaler
     end
 
     def scale!
+      unless @scale_actuator.try(:active?)
+        log(:warn, "Actuator:#{@scale_actuator.class} is not active! Check your logs.")
+        return
+      end
+
       is_stopped = @scale_actuator.stopped?
       action = @scale_sensor.check(is_stopped)
       if action == Action::INCREASE

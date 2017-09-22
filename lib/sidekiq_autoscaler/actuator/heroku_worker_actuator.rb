@@ -5,9 +5,15 @@ module SidekiqAutoscaler::Actuator
   require 'sidekiq_autoscaler/util/sidekiq_util'
 
   class HerokuWorkerActuator
-
     include SidekiqAutoscaler
     include SidekiqAutoscaler::Util::Loggable
+
+    KEY_APP_NAME = SidekiqAutoscaler::CONF_PREFIX+'APP_NAME'
+    KEY_HEROKU_API_KEY = SidekiqAutoscaler::CONF_PREFIX+'HEROKU_API_KEY'
+    KEY_MIN = SidekiqAutoscaler::CONF_PREFIX+'MIN'
+    KEY_MAX = SidekiqAutoscaler::CONF_PREFIX+'MAX'
+
+    @active = true
 
     @min_instances = nil
     @max_instances = nil
@@ -20,16 +26,34 @@ module SidekiqAutoscaler::Actuator
     def initialize(options=ENV)
       self.log_prefix='HEROKU_WORKER_ACTUATOR: '
 
-      @min_instances = (options[SidekiqAutoscaler::CONF_PREFIX+'MIN'] || '1').to_i
-      @max_instances = (options[SidekiqAutoscaler::CONF_PREFIX+'MAX'] || '1').to_i
+      @min_instances = (options[KEY_MIN] || '1').to_i
+      @max_instances = (options[KEY_MAX] || '1').to_i
 
-      @heroku_name = options[SidekiqAutoscaler::CONF_PREFIX+'APP_NAME'] || (raise 'Must configure heroku app name')
-      @heroku_api_key = options[SidekiqAutoscaler::CONF_PREFIX+'HEROKU_API_KEY'] || (raise 'Must configure heroku api key')
+      @heroku_name = options[KEY_APP_NAME]
+      if @heroku_name.blank?
+        logger.warn {"Invalid value for #{KEY_APP_NAME}. Actuator is disabled."}
+        @active = false
+      end
 
-      @heroku = PlatformAPI.connect_oauth(@heroku_api_key)
+      @heroku_api_key = options[KEY_HEROKU_API_KEY]
+      if @heroku_api_key.blank?
+        logger.warn {"Invalid value for #{KEY_HEROKU_API_KEY}. Actuator is disabled."}
+        @active = false
+      end
+
+      begin
+        @heroku = @active && PlatformAPI.connect_oauth(@heroku_api_key)
+      rescue => e
+        logger.error {"Error initializing Heroku PlatformAPI: #{e.message}"}
+        @active = false
+      end
     end
 
     public ################################################ PUBLIC #####################################################
+    def active?
+      @active
+    end
+
     def stopped?
       instance_count == 0
     end

@@ -15,6 +15,10 @@ module SidekiqAutoscaler::Actuator
       @instances = 0
     end
 
+    def active?
+      true
+    end
+
     def stopped?
       @instances == 0
     end
