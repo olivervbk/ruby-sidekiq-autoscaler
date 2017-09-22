@@ -12,6 +12,8 @@ though in this mode it will sping up a worker as soon as a job is queued or sche
 The HerokuWorkerActuator tries to quiet the SidekiqWorkers before shutting them down, or rebooting them if the queue grows again.
 Needs to be tested more.
 
+For more information, see [Heroku](https://www.heroku.com/) and [Sidekiq](https://github.com/mperham/sidekiq).
+
 # Getting started
 ## Install
 Add to **Gemfile**:
@@ -25,9 +27,11 @@ and run
 ## Configure
 The expected way to run this is on your webserver (Rails?), running on the dyno 'web.1', so that only one server runs the autoscaler.
 
+Example Rails configuration, for Heroku web workers:
+
 **config/initializers/sidekiq_autoscaler.rb**:
 
-```
+```ruby
 require 'logger'
 require 'sidekiq_autoscaler'
 require 'sidekiq_autoscaler/sensor/sidekiq_sensor'
@@ -54,7 +58,7 @@ end
   * SIDEKIQ_AUTOSCALER_APP_NAME - name of your heroku app that will be managed
   * SIDEKIQ_AUTOSCALER_HEROKU_API_KEY - key to manage the app
   
-# TODO
+# TO DO
 1. add fast queue growth heuristics. Currently, it only scales if the jobs have been queued a while, which slows the scaling response.
 2. test in production
 3. add a web interface to adjust values on the fly, saving to Redis?
