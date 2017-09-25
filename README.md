@@ -18,7 +18,7 @@ For more information, see [Heroku](https://www.heroku.com/) and [Sidekiq](https:
 ## Install
 Add to **Gemfile**:
 
-`gem 'sidekiq_autoscaler', '0.1.0', git: 'https://github.com/olivervbk/ruby-sidekiq-autoscaler.git'`
+`gem 'sidekiq_autoscaler', '0.1.0', git: 'https://github.com/olivervbk/ruby-sidekiq-autoscaler.git', tag: 'v0.1.0'`
 
 and run
 
@@ -67,4 +67,5 @@ end
 
 ## Contributing
 Sure, just send me a pull request with the changes :)
+
 Feedback appreciated.
