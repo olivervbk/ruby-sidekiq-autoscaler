@@ -24,6 +24,7 @@ module SidekiqAutoscaler::Actuator
     @heroku = nil
 
     def initialize(options=ENV)
+      @active = true
       self.log_prefix='HEROKU_WORKER_ACTUATOR: '
 
       @min_instances = (options[KEY_MIN] || '1').to_i
@@ -31,20 +32,23 @@ module SidekiqAutoscaler::Actuator
 
       @heroku_name = options[KEY_APP_NAME]
       if @heroku_name.blank?
-        logger.warn {"Invalid value for #{KEY_APP_NAME}. Actuator is disabled."}
+        log(:error, "Invalid value for #{KEY_APP_NAME}. Actuator is disabled.")
         @active = false
       end
 
       @heroku_api_key = options[KEY_HEROKU_API_KEY]
       if @heroku_api_key.blank?
-        logger.warn {"Invalid value for #{KEY_HEROKU_API_KEY}. Actuator is disabled."}
+        log(:error, "Invalid value for #{KEY_HEROKU_API_KEY}. Actuator is disabled.")
         @active = false
       end
 
       begin
-        @heroku = @active && PlatformAPI.connect_oauth(@heroku_api_key)
+        if @active
+          @heroku = PlatformAPI.connect_oauth(@heroku_api_key)
+          @heroku.app.info(@heroku_name) #test connection
+        end
       rescue => e
-        logger.error {"Error initializing Heroku PlatformAPI: #{e.message}"}
+        log(:error, "Error initializing Heroku PlatformAPI: #{e}")
         @active = false
       end
     end
