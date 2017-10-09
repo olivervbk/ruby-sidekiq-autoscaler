@@ -59,11 +59,10 @@ end
   * SIDEKIQ_AUTOSCALER_HEROKU_API_KEY - key to manage the app
   
 # TO DO
-1. add fast queue growth heuristics. Currently, it only scales if the jobs have been queued a while, which slows the scaling response.
-2. test in production
-3. add a web interface to adjust values on the fly, saving to Redis?
-4. improve scaling algorithm so that it doesn't always try to use the minimum number of nodes
-5. check if the scheduled jobs on sidekiq will happen soonish before spinning up a worker because of them.
+1. test in production (currently being tested)
+2. improve scaling algorithm so that it doesn't always try to use the minimum number of nodes
+3. add fast queue growth heuristics. Currently, it only scales if the jobs have been queued a while, which slows the scaling response.
+4. add a web interface to adjust values on the fly, saving to Redis?
 
 ## Contributing
 Sure, just send me a pull request with the changes :)
