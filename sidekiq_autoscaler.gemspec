@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name        = 'sidekiq_autoscaler'
-  spec.version     = '0.2.0'
+  spec.version     = '0.2.X'
   spec.date        = '2017-09-26'
   spec.summary     = 'Generic Autoscaler algorithm focused on Sidekiq and Heroku'
   spec.description = 'A different approach on autoscaling rails on heroku.'
