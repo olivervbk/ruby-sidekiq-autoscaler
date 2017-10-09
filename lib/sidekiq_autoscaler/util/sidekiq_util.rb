@@ -55,8 +55,12 @@ module SidekiqAutoscaler::Util
       return queue_arr.map(&:size).sum
     end
 
-    def self.scheduled_size
-      return self.stats.scheduled_size
+    def self.retry_count(before = nil)
+      Sidekiq::RetrySet.new.select{|r| before.nil? || r.enqueued_at < before}.count
+    end
+
+    def self.scheduled_count(before = nil)
+      Sidekiq::ScheduledSet.new.select{|r| before.nil? || r.enqueued_at < before}.count
     end
 
     def self.max_latency
