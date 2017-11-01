@@ -39,9 +39,11 @@ module SidekiqAutoscaler::Util
     end
 
     def self.worker_processes
-      worker_names = self.process_set.map{|p|[p.send(:identity), p.stopping?]}.sort_by{|d|d[0]}
+      worker_names = self.process_set.map {|p| [p.send(:identity), p.stopping?]}
+      sorted_workers = worker_names.sort_by {|d| d[0].match(/worker\.(\d+)/)[1].to_i} # sort by worker index
+
       worker_data = {}
-      worker_names.each{|identity, stopping|
+      sorted_workers.each {|identity, stopping|
         worker_data[identity] = {
             identity: identity,
             stopping: stopping,
