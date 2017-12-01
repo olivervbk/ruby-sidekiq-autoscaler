@@ -19,7 +19,7 @@ module SidekiqAutoscaler::Sensor
     def initialize(options=ENV)
       @sample_window = (options[CONF_PREFIX+'SAMPLE_WINDOW'] || '2').to_i
       @latency_threshold = (options[CONF_PREFIX+'LATENCY_THRESHOLD'] || '20').to_i
-      @schedule_threshold = (options[CONF_PREFIX+'SCHEDULE_TRESHOLD'] || '20').to_i
+      @schedule_threshold = (options[CONF_PREFIX+'SCHEDULE_THRESHOLD'] || '20').to_i
     end
 
     @next_check = nil

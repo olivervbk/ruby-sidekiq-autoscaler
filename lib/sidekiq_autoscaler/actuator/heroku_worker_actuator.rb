@@ -12,16 +12,22 @@ module SidekiqAutoscaler::Actuator
     KEY_HEROKU_API_KEY = SidekiqAutoscaler::CONF_PREFIX+'HEROKU_API_KEY'
     KEY_MIN = SidekiqAutoscaler::CONF_PREFIX+'MIN'
     KEY_MAX = SidekiqAutoscaler::CONF_PREFIX+'MAX'
-
-    @active = true
-
+    KEY_MAX_JOBS_BEFORE_QUIET = SidekiqAutoscaler::CONF_PREFIX+'MAX_JOBS_BEFORE_QUIET'
+    KEY_SCALE_DOWN_DELAY = SidekiqAutoscaler::CONF_PREFIX+'SCALE_DOWN_DELAY'
+    
+    # options
     @min_instances = nil
     @max_instances = nil
 
     @heroku_name = nil
     @heroku_api_key = nil
+    
+    @scale_down_delay = nil
+    @max_jobs_before_quiet = nil
 
-    @heroku = nil
+    # internal
+    @active = true # if heroku api and name are valid
+    @heroku = nil #heroku api instance
 
     def initialize(options=ENV)
       @active = true
@@ -29,6 +35,9 @@ module SidekiqAutoscaler::Actuator
 
       @min_instances = (options[KEY_MIN] || '1').to_i
       @max_instances = (options[KEY_MAX] || '1').to_i
+
+      @scale_down_delay = (options[KEY_SCALE_DOWN_DELAY] || '0').to_i
+      @max_jobs_before_quiet = (options[KEY_SCALE_DOWN_DELAY || '0']).to_i
 
       @heroku_name = options[KEY_APP_NAME]
       if @heroku_name.blank?
@@ -109,11 +118,14 @@ module SidekiqAutoscaler::Actuator
         return false
       end
 
+      #TODO check @scale_down_delay
+
       # Sidekiq actions should not apply to lonely process
       if worker_data.any?
         last_worker = worker_data.values.last
         if worker_data.count > 1
           unless last_worker[:stopping]
+            #TODO check @max_jobs_before_quiet
             Util::SidekiqUtil.quiet_worker!(last_worker[:identity])
             log('QUIET last worker!')
             return true
