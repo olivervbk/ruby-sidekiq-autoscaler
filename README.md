@@ -18,7 +18,7 @@ For more information, see [Heroku](https://www.heroku.com/) and [Sidekiq](https:
 ## Install
 Add to **Gemfile**:
 
-`gem 'sidekiq_autoscaler', '0.2.0', git: 'https://github.com/olivervbk/ruby-sidekiq-autoscaler.git', tag: 'v0.2.0'`
+`gem 'sidekiq_autoscaler', '0.3.0', git: 'https://github.com/olivervbk/ruby-sidekiq-autoscaler.git', tag: 'v0.3.0'`
 
 and run
 
@@ -52,6 +52,7 @@ end
 * Sensor::SidekiqSensor
   * SIDEKIQ_AUTOSCALER_SAMPLE_WINDOW - seconds in which Sensor::SidekiqSensor tries to read the state
   * SIDEKIQ_AUTOSCALER_LATENCY_THRESHOLD - threshold that a job can stay queued before it tries to increase the scaling
+  * SIDEKIQ_AUTOSCALER_SCHEDULE_TRESHOLD - threshold to count scheduled(scheduled/retry) before starting FIRST worker
 * Actuator:HerokuWorkerActuator
   * SIDEKIQ_AUTOSCALER_MIN - minimum scaled workers
   * SIDEKIQ_AUTOSCALER_MAX - maximum scaled workers
